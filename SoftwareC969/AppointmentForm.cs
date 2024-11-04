@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Configuration;
 using System.Data;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -9,8 +10,7 @@ namespace SoftwareC969
 {
     public partial class AppointmentForm : Form
     {
-        private string connectionString = "Server=localhost;Port=3306;Database=client_schedule;Uid=test;Pwd=test;";
-        private int customerId;
+        private string connectionString = ConfigurationManager.ConnectionStrings["ClientScheduleDB"].ConnectionString; private int customerId;
         public AppointmentForm(int customerId)
         {
             InitializeComponent();
@@ -261,6 +261,12 @@ namespace SoftwareC969
                 cmbTimeZone.Items.Add(timeZone);
             }
             cmbTimeZone.DisplayMember = "DisplayName";
+        }
+
+        private void btnViewReports2_Click(object sender, EventArgs e)
+        {
+            ReportsForm reportsForm = new ReportsForm();
+            reportsForm.ShowDialog(); 
         }
     }
 }

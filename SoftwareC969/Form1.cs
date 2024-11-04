@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ namespace SoftwareC969
 {
     public partial class Form1 : Form
     {
+        private readonly string logFilePath = "Login_History.txt";
         private string userLanguage;
         private Dictionary<string, string> messages;
         public Form1()
@@ -23,7 +25,20 @@ namespace SoftwareC969
             DetermineUserLocation();
             LoadMessages();
         }
+        private void LogLoginAttempt(string username)
+        {
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"); 
+            string logEntry = $"{timestamp} - {username} logged in";
 
+            try
+            {
+                System.IO.File.AppendAllText(logFilePath, logEntry + Environment.NewLine);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error logging the login attempt: " + ex.Message);
+            }
+        }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
@@ -32,6 +47,7 @@ namespace SoftwareC969
 
             if (VerifyCredentials(username, password))
             {
+                LogLoginAttempt(username);
                 CheckUpcomingAppointments();
                 MessageBox.Show(messages["welcome"]);
                 CustomerForm customerForm = new CustomerForm();
@@ -47,8 +63,7 @@ namespace SoftwareC969
 
         private bool VerifyCredentials(string username, string password)
         {
-            string connectionString = "Server=localhost;Port=3306;Database=client_schedule;Uid=test;Pwd=test;";
-
+            string connectionString = ConfigurationManager.ConnectionStrings["ClientScheduleDB"].ConnectionString;
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 try
@@ -71,9 +86,8 @@ namespace SoftwareC969
         }
         private void CheckUpcomingAppointments()
         {
-            string connectionString = "Server=localhost;Port=3306;Database=client_schedule;Uid=test;Pwd=test;";
-
-            DateTime currentTimeUtc = DateTime.UtcNow;
+         string connectionString = ConfigurationManager.ConnectionStrings["ClientScheduleDB"].ConnectionString;
+        DateTime currentTimeUtc = DateTime.UtcNow;
             DateTime alertThresholdTime = currentTimeUtc.AddMinutes(15);
 
             using (MySqlConnection connection = new MySqlConnection(connectionString))

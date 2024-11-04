@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Configuration;
 using System.Data;
 using System.Windows.Forms;
 
@@ -8,8 +9,7 @@ namespace SoftwareC969
     public partial class CalendarForm : Form
     {
         private int customerId;
-        private string connectionString = "Server=localhost;Port=3306;Database=client_schedule;Uid=test;Pwd=test;";
-
+        private string connectionString = ConfigurationManager.ConnectionStrings["ClientScheduleDB"].ConnectionString;
         public CalendarForm(int customerId)
         {
             InitializeComponent();
@@ -59,6 +59,12 @@ namespace SoftwareC969
                     MessageBox.Show("Error loading appointments for the selected date: " + ex.Message);
                 }
             }
+        }
+
+        private void btnViewReports3_Click(object sender, EventArgs e)
+        {
+            ReportsForm reportsForm = new ReportsForm();
+            reportsForm.ShowDialog();
         }
     }
 }

@@ -42,6 +42,7 @@
             this.dgvAppointments = new System.Windows.Forms.DataGridView();
             this.btnViewCalendar = new System.Windows.Forms.Button();
             this.cmbTimeZone = new System.Windows.Forms.ComboBox();
+            this.btnViewReports2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAppointments)).BeginInit();
             this.SuspendLayout();
             // 
@@ -169,11 +170,22 @@
             this.cmbTimeZone.Size = new System.Drawing.Size(121, 28);
             this.cmbTimeZone.TabIndex = 13;
             // 
+            // btnViewReports2
+            // 
+            this.btnViewReports2.Location = new System.Drawing.Point(683, 356);
+            this.btnViewReports2.Name = "btnViewReports2";
+            this.btnViewReports2.Size = new System.Drawing.Size(75, 65);
+            this.btnViewReports2.TabIndex = 14;
+            this.btnViewReports2.Text = "View Reports";
+            this.btnViewReports2.UseVisualStyleBackColor = true;
+            this.btnViewReports2.Click += new System.EventHandler(this.btnViewReports2_Click);
+            // 
             // AppointmentForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnViewReports2);
             this.Controls.Add(this.cmbTimeZone);
             this.Controls.Add(this.btnViewCalendar);
             this.Controls.Add(this.dgvAppointments);
@@ -212,5 +224,6 @@
         private System.Windows.Forms.DataGridView dgvAppointments;
         private System.Windows.Forms.Button btnViewCalendar;
         private System.Windows.Forms.ComboBox cmbTimeZone;
+        private System.Windows.Forms.Button btnViewReports2;
     }
 }

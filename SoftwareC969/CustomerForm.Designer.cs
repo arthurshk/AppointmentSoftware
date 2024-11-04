@@ -39,6 +39,7 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.dgvCustomers = new System.Windows.Forms.DataGridView();
             this.btnAppointments = new System.Windows.Forms.Button();
+            this.btnViewReports = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCustomers)).BeginInit();
             this.SuspendLayout();
             // 
@@ -140,11 +141,22 @@
             this.btnAppointments.UseVisualStyleBackColor = true;
             this.btnAppointments.Click += new System.EventHandler(this.btnAppointments_Click);
             // 
+            // btnViewReports
+            // 
+            this.btnViewReports.Location = new System.Drawing.Point(318, 118);
+            this.btnViewReports.Name = "btnViewReports";
+            this.btnViewReports.Size = new System.Drawing.Size(456, 30);
+            this.btnViewReports.TabIndex = 11;
+            this.btnViewReports.Text = "View Reports";
+            this.btnViewReports.UseVisualStyleBackColor = true;
+            this.btnViewReports.Click += new System.EventHandler(this.btnViewReports_Click);
+            // 
             // CustomerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnViewReports);
             this.Controls.Add(this.btnAppointments);
             this.Controls.Add(this.dgvCustomers);
             this.Controls.Add(this.btnDelete);
@@ -177,5 +189,6 @@
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.DataGridView dgvCustomers;
         private System.Windows.Forms.Button btnAppointments;
+        private System.Windows.Forms.Button btnViewReports;
     }
 }

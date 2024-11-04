@@ -2,6 +2,7 @@
 using SoftwareC969.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,8 +11,7 @@ namespace SoftwareC969
 {
     public partial class ReportsForm : Form
     {
-        private string connectionString = "Server=localhost;Port=3306;Database=client_schedule;Uid=test;Pwd=test;";
-
+        private string connectionString = ConfigurationManager.ConnectionStrings["ClientScheduleDB"].ConnectionString;
         public ReportsForm()
         {
             InitializeComponent();

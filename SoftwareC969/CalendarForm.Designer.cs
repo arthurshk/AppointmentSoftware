@@ -31,6 +31,7 @@
             this.monthCalendar = new System.Windows.Forms.MonthCalendar();
             this.dgvDailyAppointments = new System.Windows.Forms.DataGridView();
             this.selectedDateLbl = new System.Windows.Forms.Label();
+            this.btnViewReports3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDailyAppointments)).BeginInit();
             this.SuspendLayout();
             // 
@@ -60,11 +61,22 @@
             this.selectedDateLbl.TabIndex = 2;
             this.selectedDateLbl.Text = "Selected Date:";
             // 
+            // btnViewReports3
+            // 
+            this.btnViewReports3.Location = new System.Drawing.Point(534, 47);
+            this.btnViewReports3.Name = "btnViewReports3";
+            this.btnViewReports3.Size = new System.Drawing.Size(175, 67);
+            this.btnViewReports3.TabIndex = 3;
+            this.btnViewReports3.Text = "View Reports";
+            this.btnViewReports3.UseVisualStyleBackColor = true;
+            this.btnViewReports3.Click += new System.EventHandler(this.btnViewReports3_Click);
+            // 
             // CalendarForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnViewReports3);
             this.Controls.Add(this.selectedDateLbl);
             this.Controls.Add(this.dgvDailyAppointments);
             this.Controls.Add(this.monthCalendar);
@@ -81,5 +93,6 @@
         private System.Windows.Forms.MonthCalendar monthCalendar;
         private System.Windows.Forms.DataGridView dgvDailyAppointments;
         private System.Windows.Forms.Label selectedDateLbl;
+        private System.Windows.Forms.Button btnViewReports3;
     }
 }

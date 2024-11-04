@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Configuration;
 using System.Data;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -8,8 +9,7 @@ namespace SoftwareC969
 {
     public partial class CustomerForm : Form
     {
-        private string connectionString = "Server=localhost;Port=3306;Database=client_schedule;Uid=test;Pwd=test;";
-        public CustomerForm()
+        private string connectionString = ConfigurationManager.ConnectionStrings["ClientScheduleDB"].ConnectionString; public CustomerForm()
         {
             InitializeComponent();
             LoadCustomerData();
@@ -157,6 +157,12 @@ namespace SoftwareC969
 
             AppointmentForm appointmentForm = new AppointmentForm(customerId);
             appointmentForm.ShowDialog();
+        }
+
+        private void btnViewReports_Click(object sender, EventArgs e)
+        {
+            ReportsForm reportsForm = new ReportsForm();
+            reportsForm.ShowDialog(); 
         }
     }
 }
