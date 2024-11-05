@@ -49,10 +49,10 @@ namespace SoftwareC969
             {
                 LogLoginAttempt(username);
                 CheckUpcomingAppointments();
-                MessageBox.Show(messages["welcome"]);
+               MessageBox.Show(messages["welcome"]);
                 CustomerForm customerForm = new CustomerForm();
                 customerForm.Show();
-                this.Close();
+                this.Hide();
             }
             else
             {
@@ -127,10 +127,10 @@ namespace SoftwareC969
         }
         private void DetermineUserLocation()
         {
-            CultureInfo culture = CultureInfo.CurrentCulture;
-            userLanguage = culture.TwoLetterISOLanguageName;
+            CultureInfo currentCulture = CultureInfo.CurrentCulture;
+            RegionInfo regionInfo = new RegionInfo(currentCulture.Name);
 
-            lblLocation.Text = $"Location detected: {culture.DisplayName}";
+            lblLocation.Text = $"Location detected: {regionInfo.EnglishName}";
         }
 
         private void LoadMessages()

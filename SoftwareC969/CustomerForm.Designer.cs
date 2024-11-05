@@ -40,6 +40,7 @@
             this.dgvCustomers = new System.Windows.Forms.DataGridView();
             this.btnAppointments = new System.Windows.Forms.Button();
             this.btnViewReports = new System.Windows.Forms.Button();
+            this.btnClearAll = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCustomers)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,7 +104,7 @@
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(481, 48);
+            this.btnUpdate.Location = new System.Drawing.Point(454, 48);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(136, 63);
             this.btnUpdate.TabIndex = 7;
@@ -113,7 +114,7 @@
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(656, 48);
+            this.btnDelete.Location = new System.Drawing.Point(596, 48);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(118, 63);
             this.btnDelete.TabIndex = 8;
@@ -151,11 +152,22 @@
             this.btnViewReports.UseVisualStyleBackColor = true;
             this.btnViewReports.Click += new System.EventHandler(this.btnViewReports_Click);
             // 
+            // btnClearAll
+            // 
+            this.btnClearAll.Location = new System.Drawing.Point(721, 49);
+            this.btnClearAll.Name = "btnClearAll";
+            this.btnClearAll.Size = new System.Drawing.Size(67, 63);
+            this.btnClearAll.TabIndex = 12;
+            this.btnClearAll.Text = "Clear";
+            this.btnClearAll.UseVisualStyleBackColor = true;
+            this.btnClearAll.Click += new System.EventHandler(this.btnClearAll_Click);
+            // 
             // CustomerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnClearAll);
             this.Controls.Add(this.btnViewReports);
             this.Controls.Add(this.btnAppointments);
             this.Controls.Add(this.dgvCustomers);
@@ -190,5 +202,6 @@
         private System.Windows.Forms.DataGridView dgvCustomers;
         private System.Windows.Forms.Button btnAppointments;
         private System.Windows.Forms.Button btnViewReports;
+        private System.Windows.Forms.Button btnClearAll;
     }
 }

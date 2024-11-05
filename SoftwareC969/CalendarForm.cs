@@ -30,17 +30,21 @@ namespace SoftwareC969
                 try
                 {
                     connection.Open();
-                    string query = @"SELECT appointmentId, customerId, type, start, end 
-                             FROM appointment 
-                             WHERE customerId = @customerId 
-                             AND DATE(start) = @date";
+                    string query = @"SELECT c.customerName, a.type, a.start, a.end
+                             FROM appointment a
+                             JOIN customer c ON a.customerId = c.customerId
+                             WHERE a.customerId = @customerId 
+                             AND DATE(a.start) = @date";
+
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     cmd.Parameters.AddWithValue("@customerId", customerId);
                     cmd.Parameters.AddWithValue("@date", date.Date);
+
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     DataTable table = new DataTable();
                     adapter.Fill(table);
-                    TimeZoneInfo userTimeZone = TimeZoneInfo.Local; 
+
+                    TimeZoneInfo userTimeZone = TimeZoneInfo.Local;
 
                     foreach (DataRow row in table.Rows)
                     {
@@ -53,6 +57,11 @@ namespace SoftwareC969
                     }
 
                     dgvDailyAppointments.DataSource = table;
+
+                    dgvDailyAppointments.Columns["customerName"].HeaderText = "Customer Name";
+                    dgvDailyAppointments.Columns["type"].HeaderText = "Type";
+                    dgvDailyAppointments.Columns["start"].HeaderText = "Start Time";
+                    dgvDailyAppointments.Columns["end"].HeaderText = "End Time";
                 }
                 catch (Exception ex)
                 {

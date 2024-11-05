@@ -50,16 +50,20 @@ namespace SoftwareC969
                 try
                 {
                     connection.Open();
-                    string query = "SELECT * FROM appointment";
+                    string query = @"SELECT c.customerName, a.type, a.start, a.end
+                             FROM appointment a
+                             JOIN customer c ON a.customerId = c.customerId";
+
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     DataTable table = new DataTable();
                     adapter.Fill(table);
+
                     dgvAppointments.DataSource = table;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error loading appointments: " + ex.Message);
+                    MessageBox.Show("Error loading appointment data: " + ex.Message);
                 }
             }
         }

@@ -1,4 +1,6 @@
-﻿namespace SoftwareC969
+﻿using System.Windows.Forms;
+
+namespace SoftwareC969
 {
     partial class AppointmentForm
     {
@@ -81,6 +83,7 @@
             // 
             // dtpStart
             // 
+            this.dtpStart.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpStart.Location = new System.Drawing.Point(267, 113);
             this.dtpStart.Name = "dtpStart";
             this.dtpStart.Size = new System.Drawing.Size(382, 26);
@@ -179,9 +182,17 @@
             this.btnViewReports2.Text = "View Reports";
             this.btnViewReports2.UseVisualStyleBackColor = true;
             this.btnViewReports2.Click += new System.EventHandler(this.btnViewReports2_Click);
-            // 
-            // AppointmentForm
-            // 
+
+
+
+
+            this.dtpStart.Format = DateTimePickerFormat.Custom;
+            this.dtpStart.CustomFormat = "MM/dd/yyyy hh:mm tt";
+
+            this.dtpEnd.Format = DateTimePickerFormat.Custom;
+            this.dtpEnd.CustomFormat = "MM/dd/yyyy hh:mm tt";
+
+
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);

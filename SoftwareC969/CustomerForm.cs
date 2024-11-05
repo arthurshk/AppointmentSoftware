@@ -21,11 +21,15 @@ namespace SoftwareC969
                 try
                 {
                     connection.Open();
-                    string query = "SELECT * FROM customer";
+                    string query = @"SELECT c.customerId, c.customerName, a.address, a.phone, c.active 
+                             FROM customer c
+                             JOIN address a ON c.addressId = a.addressId";
+
                     MySqlCommand cmd = new MySqlCommand(query, connection);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     DataTable table = new DataTable();
                     adapter.Fill(table);
+
                     dgvCustomers.DataSource = table;
                 }
                 catch (Exception ex)
@@ -53,28 +57,39 @@ namespace SoftwareC969
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            if (ValidateCustomerData())
             {
-                if (ValidateCustomerData())
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-                    using (MySqlConnection connection = new MySqlConnection(connectionString))
+                    try
                     {
-                        try
-                        {
-                            connection.Open();
-                            string query = "INSERT INTO customer (customerName, address, phone) VALUES (@name, @address, @phone)";
-                            MySqlCommand cmd = new MySqlCommand(query, connection);
-                            cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
-                            cmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
-                            cmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+                        connection.Open();
 
-                            cmd.ExecuteNonQuery();
-                            MessageBox.Show("Customer added successfully.");
-                            LoadCustomerData(); 
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Error adding customer: " + ex.Message);
-                        }
+                        string addressQuery = "INSERT INTO address (address, phone, createDate, createdBy, lastUpdate, lastUpdateBy) " +
+                                              "VALUES (@address, @phone, NOW(), 'Admin', NOW(), 'Admin')";
+                        MySqlCommand addressCmd = new MySqlCommand(addressQuery, connection);
+                        addressCmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
+                        addressCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+
+                        addressCmd.ExecuteNonQuery();
+
+                        MySqlCommand getLastIdCmd = new MySqlCommand("SELECT LAST_INSERT_ID()", connection);
+                        int addressId = Convert.ToInt32(getLastIdCmd.ExecuteScalar());
+
+                        string customerQuery = "INSERT INTO customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy) " +
+                                               "VALUES (@name, @addressId, @active, NOW(), 'Admin', NOW(), 'Admin')";
+                        MySqlCommand customerCmd = new MySqlCommand(customerQuery, connection);
+                        customerCmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
+                        customerCmd.Parameters.AddWithValue("@addressId", addressId); 
+                        customerCmd.Parameters.AddWithValue("@active", 1); 
+
+                        customerCmd.ExecuteNonQuery();
+                        MessageBox.Show("Customer added successfully.");
+                        LoadCustomerData();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error adding customer: " + ex.Message + "\nStack Trace:\n" + ex.StackTrace);
                     }
                 }
             }
@@ -85,26 +100,52 @@ namespace SoftwareC969
             if (ValidateCustomerData() && dgvCustomers.SelectedRows.Count > 0)
             {
                 int customerId = Convert.ToInt32(dgvCustomers.SelectedRows[0].Cells["customerId"].Value);
+                int addressId = Convert.ToInt32(dgvCustomers.SelectedRows[0].Cells["addressId"].Value);
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     try
                     {
                         connection.Open();
-                        string query = "UPDATE customer SET customerName=@name, address=@address, phone=@phone WHERE customerId=@customerId";
-                        MySqlCommand cmd = new MySqlCommand(query, connection);
-                        cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
-                        cmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
-                        cmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
-                        cmd.Parameters.AddWithValue("@customerId", customerId);
 
-                        cmd.ExecuteNonQuery();
+                        string addressQuery = "UPDATE address SET address = @address, phone = @phone, lastUpdate = NOW(), lastUpdateBy = 'Admin' WHERE addressId = @addressId";
+                        MySqlCommand addressCmd = new MySqlCommand(addressQuery, connection);
+                        addressCmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
+                        addressCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+                        addressCmd.Parameters.AddWithValue("@addressId", addressId);
+
+                        Console.WriteLine("Executing address update query...");
+                        Console.WriteLine($"Address: {txtAddress.Text.Trim()}, Phone: {txtPhone.Text.Trim()}, AddressId: {addressId}");
+
+                        int addressRowsAffected = addressCmd.ExecuteNonQuery();
+                        if (addressRowsAffected == 0)
+                        {
+                            MessageBox.Show("Address update failed. Please ensure the addressId exists.");
+                            return;
+                        }
+
+                        string customerQuery = "UPDATE customer SET customerName = @name, active = @active, lastUpdate = NOW(), lastUpdateBy = 'Admin' WHERE customerId = @customerId";
+                        MySqlCommand customerCmd = new MySqlCommand(customerQuery, connection);
+                        customerCmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
+                        customerCmd.Parameters.AddWithValue("@active", 1); 
+                        customerCmd.Parameters.AddWithValue("@customerId", customerId);
+
+                        Console.WriteLine("Executing customer update query...");
+                        Console.WriteLine($"Name: {txtName.Text.Trim()}, Active: 1, CustomerId: {customerId}");
+
+                        int customerRowsAffected = customerCmd.ExecuteNonQuery();
+                        if (customerRowsAffected == 0)
+                        {
+                            MessageBox.Show("Customer update failed. Please ensure the customerId exists.");
+                            return;
+                        }
+
                         MessageBox.Show("Customer updated successfully.");
                         LoadCustomerData();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Error updating customer: " + ex.Message);
+                        MessageBox.Show("Error updating customer: " + ex.Message + "\nStack Trace:\n" + ex.StackTrace);
                     }
                 }
             }
@@ -163,6 +204,33 @@ namespace SoftwareC969
         {
             ReportsForm reportsForm = new ReportsForm();
             reportsForm.ShowDialog(); 
+        }
+
+        private void btnClearAll_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var confirmation = MessageBox.Show("Are you sure you want to delete all customer and address records?", "Confirm Delete", MessageBoxButtons.YesNo);
+                if (confirmation == DialogResult.No) return;
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string deleteCustomerQuery = "DELETE FROM customer";
+                    MySqlCommand deleteCustomerCmd = new MySqlCommand(deleteCustomerQuery, connection);
+                    deleteCustomerCmd.ExecuteNonQuery();
+                    string deleteAddressQuery = "DELETE FROM address";
+                    MySqlCommand deleteAddressCmd = new MySqlCommand(deleteAddressQuery, connection);
+                    deleteAddressCmd.ExecuteNonQuery();
+
+                    MessageBox.Show("All customer and address records have been deleted.");
+                    LoadCustomerData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error clearing customer and address records: " + ex.Message);
+            }
         }
     }
 }
