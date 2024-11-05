@@ -42,32 +42,44 @@ namespace SoftwareC969
         private void GenerateReport2()
         {
             List<Appointment> appointments = GetAppointments();
-            List<User> users = GetUsers();
+            List<Customer> customers = GetCustomers();
 
-            var reportData = users
-                .Select(user => new
-                {
-                    UserName = user.Name,
-                    Appointments = appointments
-                        .Where(a => a.UserId == user.UserId)
-                        .OrderBy(a => a.Start)
-                        .Select(a => new
-                        {
-                            a.Type,
-                            Start = a.Start.ToString("g"),
-                            End = a.End.ToString("g")
-                        })
-                        .ToList()
-                })
-                .ToList();
+            var reportData = new List<dynamic>();
 
-            dgvReport2.DataSource = reportData.SelectMany(u => u.Appointments.Select(a => new
+            foreach (var customer in customers)
             {
-                u.UserName,
-                a.Type,
-                a.Start,
-                a.End
-            })).ToList();
+                reportData.Add(new
+                {
+                    CustomerName = customer.Name,
+                    Type = "Customer Schedule",
+                    Start = "",
+                    End = ""
+                });
+
+                var customerAppointments = appointments
+                    .Where(a => a.CustomerId == customer.CustomerId)
+                    .OrderBy(a => a.Start)
+                    .Select(a => new
+                    {
+                        CustomerName = "", 
+                        Type = a.Type,
+                        Start = a.Start.ToString("g"),
+                        End = a.End.ToString("g")
+                    })
+                    .ToList();
+
+                reportData.AddRange(customerAppointments);
+
+                reportData.Add(new
+                {
+                    CustomerName = "",
+                    Type = "",
+                    Start = "",
+                    End = ""
+                });
+            }
+
+            dgvReport2.DataSource = reportData;
         }
         private void GenerateReport3()
         {
@@ -102,12 +114,12 @@ namespace SoftwareC969
                     {
                         appointments.Add(new Appointment
                         {
-                            AppointmentId = reader.GetInt32("appointmentId"),
-                            CustomerId = reader.GetInt32("customerId"),
-                            UserId = reader.GetInt32("userId"),
-                            Type = reader.GetString("type"),
-                            Start = reader.GetDateTime("start"),
-                            End = reader.GetDateTime("end")
+                            AppointmentId = reader["appointmentId"] != DBNull.Value ? reader.GetInt32("appointmentId") : 0,
+                            CustomerId = reader["customerId"] != DBNull.Value ? reader.GetInt32("customerId") : 0,
+                            UserId = reader["userId"] != DBNull.Value ? reader.GetInt32("userId") : 0,
+                            Type = reader["type"] != DBNull.Value ? reader.GetString("type") : "Unknown",
+                            Start = reader["start"] != DBNull.Value ? reader.GetDateTime("start") : DateTime.MinValue,
+                            End = reader["end"] != DBNull.Value ? reader.GetDateTime("end") : DateTime.MinValue
                         });
                     }
                 }
@@ -136,8 +148,8 @@ namespace SoftwareC969
                     {
                         users.Add(new User
                         {
-                            UserId = reader.GetInt32("userId"),
-                            Name = reader.GetString("userName")
+                            UserId = reader["userId"] != DBNull.Value ? reader.GetInt32("userId") : 0,
+                            Name = reader["userName"] != DBNull.Value ? reader.GetString("userName") : "Unknown"
                         });
                     }
                 }
@@ -149,6 +161,7 @@ namespace SoftwareC969
 
             return users;
         }
+
 
         private List<Customer> GetCustomers()
         {
@@ -167,8 +180,8 @@ namespace SoftwareC969
                     {
                         customers.Add(new Customer
                         {
-                            CustomerId = reader.GetInt32("customerId"),
-                            Name = reader.GetString("customerName")
+                            CustomerId = reader["customerId"] != DBNull.Value ? reader.GetInt32("customerId") : 0,
+                            Name = reader["customerName"] != DBNull.Value ? reader.GetString("customerName") : "Unknown"
                         });
                     }
                 }

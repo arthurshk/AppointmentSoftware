@@ -10,7 +10,8 @@ namespace SoftwareC969
 {
     public partial class AppointmentForm : Form
     {
-        private string connectionString = ConfigurationManager.ConnectionStrings["ClientScheduleDB"].ConnectionString; private int customerId;
+        private string connectionString = ConfigurationManager.ConnectionStrings["ClientScheduleDB"].ConnectionString;
+        private int customerId;
         public AppointmentForm(int customerId)
         {
             InitializeComponent();
@@ -50,7 +51,7 @@ namespace SoftwareC969
                 try
                 {
                     connection.Open();
-                    string query = @"SELECT c.customerName, a.type, a.start, a.end
+                    string query = @"SELECT a.appointmentId, c.customerName, a.type, a.start, a.end
                              FROM appointment a
                              JOIN customer c ON a.customerId = c.customerId";
 
@@ -59,7 +60,19 @@ namespace SoftwareC969
                     DataTable table = new DataTable();
                     adapter.Fill(table);
 
+                    if (cmbTimeZone.SelectedItem is TimeZoneInfo selectedTimeZone)
+                    {
+                        foreach (DataRow row in table.Rows)
+                        {
+                            DateTime utcStart = (DateTime)row["start"];
+                            DateTime utcEnd = (DateTime)row["end"];
+                            row["start"] = TimeZoneInfo.ConvertTimeFromUtc(utcStart, selectedTimeZone);
+                            row["end"] = TimeZoneInfo.ConvertTimeFromUtc(utcEnd, selectedTimeZone);
+                        }
+                    }
+
                     dgvAppointments.DataSource = table;
+                    dgvAppointments.Columns["appointmentId"].Visible = false;
                 }
                 catch (Exception ex)
                 {
@@ -71,6 +84,7 @@ namespace SoftwareC969
         private bool IsWithinBusinessHours(DateTime start, DateTime end)
         {
             TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+
             DateTime startEST = TimeZoneInfo.ConvertTime(start, est);
             DateTime endEST = TimeZoneInfo.ConvertTime(end, est);
 
@@ -81,18 +95,23 @@ namespace SoftwareC969
 
             return isBusinessHours;
         }
+
         private bool IsOverlappingAppointment(DateTime start, DateTime end, int? appointmentId = null)
         {
+            DateTime utcStart = TimeZoneInfo.ConvertTimeToUtc(start);
+            DateTime utcEnd = TimeZoneInfo.ConvertTimeToUtc(end);
+
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 try
                 {
                     connection.Open();
                     string query = @"SELECT COUNT(*) FROM appointment 
-                             WHERE ((@start < end AND @end > start) AND (@appointmentId IS NULL OR appointmentId != @appointmentId))";
+                             WHERE ((@utcStart < end AND @utcEnd > start) 
+                             AND (@appointmentId IS NULL OR appointmentId != @appointmentId))";
                     MySqlCommand cmd = new MySqlCommand(query, connection);
-                    cmd.Parameters.AddWithValue("@start", start);
-                    cmd.Parameters.AddWithValue("@end", end);
+                    cmd.Parameters.AddWithValue("@utcStart", utcStart);
+                    cmd.Parameters.AddWithValue("@utcEnd", utcEnd);
                     cmd.Parameters.AddWithValue("@appointmentId", appointmentId.HasValue ? (object)appointmentId.Value : DBNull.Value);
 
                     int count = Convert.ToInt32(cmd.ExecuteScalar());
@@ -142,29 +161,36 @@ namespace SoftwareC969
         }
         private void SaveAppointment(DateTime localStart, DateTime localEnd, int customerId, string type)
         {
-            DateTime utcStart = TimeZoneInfo.ConvertTimeToUtc(localStart);
-            DateTime utcEnd = TimeZoneInfo.ConvertTimeToUtc(localEnd);
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            if (cmbTimeZone.SelectedItem is TimeZoneInfo selectedTimeZone)
             {
-                try
-                {
-                    connection.Open();
-                    string query = "INSERT INTO appointment (customerId, type, start, end) VALUES (@customerId, @type, @start, @end)";
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    cmd.Parameters.AddWithValue("@customerId", customerId);
-                    cmd.Parameters.AddWithValue("@type", type);
-                    cmd.Parameters.AddWithValue("@start", utcStart);
-                    cmd.Parameters.AddWithValue("@end", utcEnd);
+                DateTime utcStart = TimeZoneInfo.ConvertTimeToUtc(localStart, selectedTimeZone);
+                DateTime utcEnd = TimeZoneInfo.ConvertTimeToUtc(localEnd, selectedTimeZone);
 
-                    cmd.ExecuteNonQuery();
-                    MessageBox.Show("Appointment added successfully.");
-                    LoadAppointments();
-                }
-                catch (Exception ex)
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
-                    MessageBox.Show("Error adding appointment: " + ex.Message);
+                    try
+                    {
+                        connection.Open();
+                        string query = "INSERT INTO appointment (customerId, type, start, end) VALUES (@customerId, @type, @start, @end)";
+                        MySqlCommand cmd = new MySqlCommand(query, connection);
+                        cmd.Parameters.AddWithValue("@customerId", customerId);
+                        cmd.Parameters.AddWithValue("@type", type);
+                        cmd.Parameters.AddWithValue("@start", utcStart);
+                        cmd.Parameters.AddWithValue("@end", utcEnd);
+
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Appointment added successfully.");
+                        LoadAppointments();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error adding appointment: " + ex.Message);
+                    }
                 }
+            }
+            else
+            {
+                MessageBox.Show("Please select a time zone.");
             }
         }
         private void btnUpdate_Click(object sender, EventArgs e)
@@ -271,6 +297,36 @@ namespace SoftwareC969
         {
             ReportsForm reportsForm = new ReportsForm();
             reportsForm.ShowDialog(); 
+        }
+
+        private void btnClearAll_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var confirmation = MessageBox.Show("Are you sure you want to delete all customer, address, and appointment records?", "Confirm Delete", MessageBoxButtons.YesNo);
+                if (confirmation == DialogResult.No) return;
+
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string deleteAppointmentQuery = "DELETE FROM appointment";
+                    MySqlCommand deleteAppointmentCmd = new MySqlCommand(deleteAppointmentQuery, connection);
+                    deleteAppointmentCmd.ExecuteNonQuery();
+                    string deleteCustomerQuery = "DELETE FROM customer";
+                    MySqlCommand deleteCustomerCmd = new MySqlCommand(deleteCustomerQuery, connection);
+                    deleteCustomerCmd.ExecuteNonQuery();
+                    string deleteAddressQuery = "DELETE FROM address";
+                    MySqlCommand deleteAddressCmd = new MySqlCommand(deleteAddressQuery, connection);
+                    deleteAddressCmd.ExecuteNonQuery();
+
+                    MessageBox.Show("All customer, address, and appointment records have been deleted.");
+                    LoadAppointments(); 
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error clearing customer, address, and appointment records: " + ex.Message);
+            }
         }
     }
 }

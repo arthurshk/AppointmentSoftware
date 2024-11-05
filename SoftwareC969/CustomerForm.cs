@@ -21,7 +21,7 @@ namespace SoftwareC969
                 try
                 {
                     connection.Open();
-                    string query = @"SELECT c.customerId, c.customerName, a.address, a.phone, c.active 
+                    string query = @"SELECT c.customerId, c.customerName, a.addressId, a.address, a.phone, c.active 
                              FROM customer c
                              JOIN address a ON c.addressId = a.addressId";
 
@@ -31,6 +31,7 @@ namespace SoftwareC969
                     adapter.Fill(table);
 
                     dgvCustomers.DataSource = table;
+                    dgvCustomers.Columns["addressId"].Visible = false; 
                 }
                 catch (Exception ex)
                 {
@@ -210,26 +211,32 @@ namespace SoftwareC969
         {
             try
             {
-                var confirmation = MessageBox.Show("Are you sure you want to delete all customer and address records?", "Confirm Delete", MessageBoxButtons.YesNo);
+                var confirmation = MessageBox.Show("Are you sure you want to delete all customer, address, and appointment records?", "Confirm Delete", MessageBoxButtons.YesNo);
                 if (confirmation == DialogResult.No) return;
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
+
+                    string deleteAppointmentQuery = "DELETE FROM appointment";
+                    MySqlCommand deleteAppointmentCmd = new MySqlCommand(deleteAppointmentQuery, connection);
+                    deleteAppointmentCmd.ExecuteNonQuery();
+
                     string deleteCustomerQuery = "DELETE FROM customer";
                     MySqlCommand deleteCustomerCmd = new MySqlCommand(deleteCustomerQuery, connection);
                     deleteCustomerCmd.ExecuteNonQuery();
+
                     string deleteAddressQuery = "DELETE FROM address";
                     MySqlCommand deleteAddressCmd = new MySqlCommand(deleteAddressQuery, connection);
                     deleteAddressCmd.ExecuteNonQuery();
 
-                    MessageBox.Show("All customer and address records have been deleted.");
+                    MessageBox.Show("All customer, address, and appointment records have been deleted.");
                     LoadCustomerData();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error clearing customer and address records: " + ex.Message);
+                MessageBox.Show("Error clearing customer, address, and appointment records: " + ex.Message);
             }
         }
     }

@@ -35,6 +35,8 @@
             this.btnLogin = new System.Windows.Forms.Button();
             this.lblLocation = new System.Windows.Forms.Label();
             this.lblErrorMessage = new System.Windows.Forms.Label();
+            this.cmbLanguage = new System.Windows.Forms.ComboBox();
+            this.languageLbl = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtUsername
@@ -97,11 +99,34 @@
             this.lblErrorMessage.TabIndex = 6;
             this.lblErrorMessage.Text = "Error";
             // 
+            // cmbLanguage
+            // 
+            this.cmbLanguage.FormattingEnabled = true;
+            this.cmbLanguage.Items.AddRange(new object[] {
+            "English",
+            "Español"});
+            this.cmbLanguage.Location = new System.Drawing.Point(641, 10);
+            this.cmbLanguage.Name = "cmbLanguage";
+            this.cmbLanguage.Size = new System.Drawing.Size(121, 28);
+            this.cmbLanguage.TabIndex = 7;
+            this.cmbLanguage.SelectedIndexChanged += new System.EventHandler(this.cmbLanguage_SelectedIndexChanged);
+            // 
+            // languageLbl
+            // 
+            this.languageLbl.AutoSize = true;
+            this.languageLbl.Location = new System.Drawing.Point(543, 13);
+            this.languageLbl.Name = "languageLbl";
+            this.languageLbl.Size = new System.Drawing.Size(81, 20);
+            this.languageLbl.TabIndex = 8;
+            this.languageLbl.Text = "Language";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.languageLbl);
+            this.Controls.Add(this.cmbLanguage);
             this.Controls.Add(this.lblErrorMessage);
             this.Controls.Add(this.lblLocation);
             this.Controls.Add(this.btnLogin);
@@ -126,6 +151,8 @@
         private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.Label lblLocation;
         private System.Windows.Forms.Label lblErrorMessage;
+        private System.Windows.Forms.ComboBox cmbLanguage;
+        private System.Windows.Forms.Label languageLbl;
     }
 }
 

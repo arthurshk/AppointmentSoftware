@@ -45,6 +45,7 @@ namespace SoftwareC969
             this.btnViewCalendar = new System.Windows.Forms.Button();
             this.cmbTimeZone = new System.Windows.Forms.ComboBox();
             this.btnViewReports2 = new System.Windows.Forms.Button();
+            this.btnClearAll = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAppointments)).BeginInit();
             this.SuspendLayout();
             // 
@@ -83,6 +84,7 @@ namespace SoftwareC969
             // 
             // dtpStart
             // 
+            this.dtpStart.CustomFormat = "MM/dd/yyyy hh:mm tt";
             this.dtpStart.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpStart.Location = new System.Drawing.Point(267, 113);
             this.dtpStart.Name = "dtpStart";
@@ -100,6 +102,8 @@ namespace SoftwareC969
             // 
             // dtpEnd
             // 
+            this.dtpEnd.CustomFormat = "MM/dd/yyyy hh:mm tt";
+            this.dtpEnd.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpEnd.Location = new System.Drawing.Point(267, 154);
             this.dtpEnd.Name = "dtpEnd";
             this.dtpEnd.Size = new System.Drawing.Size(382, 26);
@@ -182,20 +186,23 @@ namespace SoftwareC969
             this.btnViewReports2.Text = "View Reports";
             this.btnViewReports2.UseVisualStyleBackColor = true;
             this.btnViewReports2.Click += new System.EventHandler(this.btnViewReports2_Click);
-
-
-
-
-            this.dtpStart.Format = DateTimePickerFormat.Custom;
-            this.dtpStart.CustomFormat = "MM/dd/yyyy hh:mm tt";
-
-            this.dtpEnd.Format = DateTimePickerFormat.Custom;
-            this.dtpEnd.CustomFormat = "MM/dd/yyyy hh:mm tt";
-
-
+            // 
+            // btnClearAll
+            // 
+            this.btnClearAll.Location = new System.Drawing.Point(683, 195);
+            this.btnClearAll.Name = "btnClearAll";
+            this.btnClearAll.Size = new System.Drawing.Size(105, 49);
+            this.btnClearAll.TabIndex = 15;
+            this.btnClearAll.Text = "Clear";
+            this.btnClearAll.UseVisualStyleBackColor = true;
+            this.btnClearAll.Click += new System.EventHandler(this.btnClearAll_Click);
+            // 
+            // AppointmentForm
+            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnClearAll);
             this.Controls.Add(this.btnViewReports2);
             this.Controls.Add(this.cmbTimeZone);
             this.Controls.Add(this.btnViewCalendar);
@@ -236,5 +243,6 @@ namespace SoftwareC969
         private System.Windows.Forms.Button btnViewCalendar;
         private System.Windows.Forms.ComboBox cmbTimeZone;
         private System.Windows.Forms.Button btnViewReports2;
+        private Button btnClearAll;
     }
 }

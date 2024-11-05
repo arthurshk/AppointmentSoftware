@@ -137,17 +137,22 @@ namespace SoftwareC969
         {
             messages = new Dictionary<string, string>();
 
-            if (userLanguage == "es") 
+            if (userLanguage == "es")
             {
                 messages["login_error"] = "El nombre de usuario y la contraseña no coinciden.";
-                messages["welcome"] = "Bienvenido!";
+                messages["welcome"] = "¡Bienvenido!";
             }
-            else 
+            else
             {
                 messages["login_error"] = "The username and password do not match.";
                 messages["welcome"] = "Welcome!";
             }
         }
 
+        private void cmbLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            userLanguage = cmbLanguage.SelectedIndex == 1 ? "es" : "en";
+            LoadMessages(); 
+        }
     }
 }
