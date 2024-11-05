@@ -43,6 +43,10 @@ namespace SoftwareC969
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     DataTable table = new DataTable();
                     adapter.Fill(table);
+                    if (table.Rows.Count == 0)
+                    {
+                        MessageBox.Show("No appointments found for the selected date.");
+                    }
 
                     TimeZoneInfo userTimeZone = TimeZoneInfo.Local;
 
@@ -57,7 +61,6 @@ namespace SoftwareC969
                     }
 
                     dgvDailyAppointments.DataSource = table;
-
                     dgvDailyAppointments.Columns["customerName"].HeaderText = "Customer Name";
                     dgvDailyAppointments.Columns["type"].HeaderText = "Type";
                     dgvDailyAppointments.Columns["start"].HeaderText = "Start Time";

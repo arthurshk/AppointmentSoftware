@@ -131,38 +131,6 @@ namespace SoftwareC969
 
             return appointments;
         }
-        private List<User> GetUsers()
-        {
-            List<User> users = new List<User>();
-
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                try
-                {
-                    connection.Open();
-                    string query = "SELECT userId, userName FROM user";
-                    MySqlCommand cmd = new MySqlCommand(query, connection);
-                    MySqlDataReader reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        users.Add(new User
-                        {
-                            UserId = reader["userId"] != DBNull.Value ? reader.GetInt32("userId") : 0,
-                            Name = reader["userName"] != DBNull.Value ? reader.GetString("userName") : "Unknown"
-                        });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error retrieving users: " + ex.Message);
-                }
-            }
-
-            return users;
-        }
-
-
         private List<Customer> GetCustomers()
         {
             List<Customer> customers = new List<Customer>();
