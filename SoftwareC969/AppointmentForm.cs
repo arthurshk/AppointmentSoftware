@@ -254,7 +254,7 @@ namespace SoftwareC969
         {
             if (dgvAppointments.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Please select an appointment to delete.");
+                MessageBox.Show("Please select appointment to delete.");
                 return;
             }
 
@@ -303,7 +303,7 @@ namespace SoftwareC969
         {
             try
             {
-                var confirmation = MessageBox.Show("Are you sure you want to delete all customer, address, and appointment records?", "Confirm Delete", MessageBoxButtons.YesNo);
+                var confirmation = MessageBox.Show("Are you sure you want to delete all records?", "Confirm Delete", MessageBoxButtons.YesNo);
                 if (confirmation == DialogResult.No) return;
 
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -319,13 +319,13 @@ namespace SoftwareC969
                     MySqlCommand deleteAddressCmd = new MySqlCommand(deleteAddressQuery, connection);
                     deleteAddressCmd.ExecuteNonQuery();
 
-                    MessageBox.Show("All customer, address, and appointment records have been deleted.");
+                    MessageBox.Show("All records have been deleted.");
                     LoadAppointments(); 
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error clearing customer, address, and appointment records: " + ex.Message);
+                MessageBox.Show("Error deleting records: " + ex.Message);
             }
         }
     }

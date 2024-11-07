@@ -45,7 +45,7 @@ namespace SoftwareC969
                 string.IsNullOrWhiteSpace(txtAddress.Text.Trim()) ||
                 string.IsNullOrWhiteSpace(txtPhone.Text.Trim()))
             {
-                MessageBox.Show("Name, Address, and Phone fields must not be empty.");
+                MessageBox.Show("Name, Address, and Phone fields cannot be empty.");
                 return false;
             }
             if (!Regex.IsMatch(txtPhone.Text, @"^[\d-]+$"))
@@ -230,13 +230,13 @@ namespace SoftwareC969
                     MySqlCommand deleteAddressCmd = new MySqlCommand(deleteAddressQuery, connection);
                     deleteAddressCmd.ExecuteNonQuery();
 
-                    MessageBox.Show("All customer, address, and appointment records have been deleted.");
+                    MessageBox.Show("All records have been deleted.");
                     LoadCustomerData();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error clearing customer, address, and appointment records: " + ex.Message);
+                MessageBox.Show("Error deleting records: " + ex.Message);
             }
         }
     }

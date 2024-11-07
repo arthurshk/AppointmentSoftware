@@ -45,7 +45,7 @@ namespace SoftwareC969
                     adapter.Fill(table);
                     if (table.Rows.Count == 0)
                     {
-                        MessageBox.Show("No appointments found for the selected date.");
+                        MessageBox.Show("No appointments found for this date.");
                     }
 
                     TimeZoneInfo userTimeZone = TimeZoneInfo.Local;
