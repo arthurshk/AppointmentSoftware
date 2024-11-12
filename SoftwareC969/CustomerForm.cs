@@ -65,12 +65,16 @@ namespace SoftwareC969
                     try
                     {
                         connection.Open();
-
-                        string addressQuery = "INSERT INTO address (address, phone, createDate, createdBy, lastUpdate, lastUpdateBy) " +
-                                              "VALUES (@address, @phone, NOW(), 'Admin', NOW(), 'Admin')";
+                        MySqlCommand getCityIdCmd = new MySqlCommand("SELECT cityId FROM city LIMIT 1", connection);
+                        int cityId = Convert.ToInt32(getCityIdCmd.ExecuteScalar());
+                        string addressQuery = "INSERT INTO address (address, address2, phone, cityId, postalCode, createDate, createdBy, lastUpdate, lastUpdateBy) " +
+                                              "VALUES (@address, @address2, @phone, @cityId, @postalCode, NOW(), 'Admin', NOW(), 'Admin')";
                         MySqlCommand addressCmd = new MySqlCommand(addressQuery, connection);
                         addressCmd.Parameters.AddWithValue("@address", txtAddress.Text.Trim());
+                        addressCmd.Parameters.AddWithValue("@address2", string.Empty);
                         addressCmd.Parameters.AddWithValue("@phone", txtPhone.Text.Trim());
+                        addressCmd.Parameters.AddWithValue("@cityId", cityId);
+                        addressCmd.Parameters.AddWithValue("@postalCode", string.Empty);
 
                         addressCmd.ExecuteNonQuery();
 
@@ -81,8 +85,8 @@ namespace SoftwareC969
                                                "VALUES (@name, @addressId, @active, NOW(), 'Admin', NOW(), 'Admin')";
                         MySqlCommand customerCmd = new MySqlCommand(customerQuery, connection);
                         customerCmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
-                        customerCmd.Parameters.AddWithValue("@addressId", addressId); 
-                        customerCmd.Parameters.AddWithValue("@active", 1); 
+                        customerCmd.Parameters.AddWithValue("@addressId", addressId);
+                        customerCmd.Parameters.AddWithValue("@active", 1);
 
                         customerCmd.ExecuteNonQuery();
                         MessageBox.Show("Customer added successfully.");

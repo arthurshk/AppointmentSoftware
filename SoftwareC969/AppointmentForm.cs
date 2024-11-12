@@ -145,6 +145,12 @@ namespace SoftwareC969
 
             int customerId = customer.Value;
             string type = txtType.Text.Trim();
+            string title = "Default Title"; // Set a default title or retrieve from a text box
+            string description = "No Description"; // Set a default description or retrieve from a text box
+            string location = "Default Location"; // Set a default location or retrieve from a text box
+            string contact = "Unknown Contact"; // Set a default contact or retrieve from a text box
+            int userId = 1; // Replace with actual userId as needed
+
             if (string.IsNullOrEmpty(type) || !IsWithinBusinessHours(localStart, localEnd))
             {
                 MessageBox.Show("Appointment must be within business hours (9 AM - 5 PM EST, Mon-Fri) and type must not be empty.");
@@ -157,9 +163,9 @@ namespace SoftwareC969
                 return;
             }
 
-            SaveAppointment(localStart, localEnd, customerId, type);
+            SaveAppointment(localStart, localEnd, customerId, type, userId, title, description, location, contact);
         }
-        private void SaveAppointment(DateTime localStart, DateTime localEnd, int customerId, string type)
+        private void SaveAppointment(DateTime localStart, DateTime localEnd, int customerId, string type, int userId, string title = "", string description = "", string location = "Default Location", string contact = "Unknown Contact", string url = "http://example.com")
         {
             if (cmbTimeZone.SelectedItem is TimeZoneInfo selectedTimeZone)
             {
@@ -171,12 +177,19 @@ namespace SoftwareC969
                     try
                     {
                         connection.Open();
-                        string query = "INSERT INTO appointment (customerId, type, start, end) VALUES (@customerId, @type, @start, @end)";
+                        string query = "INSERT INTO appointment (customerId, type, start, end, userId, title, description, location, contact, url, createDate, createdBy, lastUpdate, lastUpdateBy) " +
+                                       "VALUES (@customerId, @type, @start, @end, @userId, @title, @description, @location, @contact, @url, NOW(), 'Admin', NOW(), 'Admin')";
                         MySqlCommand cmd = new MySqlCommand(query, connection);
                         cmd.Parameters.AddWithValue("@customerId", customerId);
                         cmd.Parameters.AddWithValue("@type", type);
                         cmd.Parameters.AddWithValue("@start", utcStart);
                         cmd.Parameters.AddWithValue("@end", utcEnd);
+                        cmd.Parameters.AddWithValue("@userId", userId);
+                        cmd.Parameters.AddWithValue("@title", string.IsNullOrEmpty(title) ? "Default Title" : title);
+                        cmd.Parameters.AddWithValue("@description", string.IsNullOrEmpty(description) ? "No Description" : description);
+                        cmd.Parameters.AddWithValue("@location", string.IsNullOrEmpty(location) ? "No Location" : location);
+                        cmd.Parameters.AddWithValue("@contact", string.IsNullOrEmpty(contact) ? "Unknown Contact" : contact);
+                        cmd.Parameters.AddWithValue("@url", string.IsNullOrEmpty(url) ? "http://example.com" : url); // Default URL
 
                         cmd.ExecuteNonQuery();
                         MessageBox.Show("Appointment added successfully.");
@@ -193,6 +206,9 @@ namespace SoftwareC969
                 MessageBox.Show("Please select a time zone.");
             }
         }
+
+
+
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             if (dgvAppointments.SelectedRows.Count == 0)
