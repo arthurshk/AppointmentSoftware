@@ -145,11 +145,11 @@ namespace SoftwareC969
 
             int customerId = customer.Value;
             string type = txtType.Text.Trim();
-            string title = "Default Title"; // Set a default title or retrieve from a text box
-            string description = "No Description"; // Set a default description or retrieve from a text box
-            string location = "Default Location"; // Set a default location or retrieve from a text box
-            string contact = "Unknown Contact"; // Set a default contact or retrieve from a text box
-            int userId = 1; // Replace with actual userId as needed
+            string title = "Default Title"; 
+            string description = "No Description"; 
+            string location = "Default Location"; 
+            string contact = "Unknown Contact"; 
+            int userId = 1; 
 
             if (string.IsNullOrEmpty(type) || !IsWithinBusinessHours(localStart, localEnd))
             {
@@ -189,7 +189,7 @@ namespace SoftwareC969
                         cmd.Parameters.AddWithValue("@description", string.IsNullOrEmpty(description) ? "No Description" : description);
                         cmd.Parameters.AddWithValue("@location", string.IsNullOrEmpty(location) ? "No Location" : location);
                         cmd.Parameters.AddWithValue("@contact", string.IsNullOrEmpty(contact) ? "Unknown Contact" : contact);
-                        cmd.Parameters.AddWithValue("@url", string.IsNullOrEmpty(url) ? "http://example.com" : url); // Default URL
+                        cmd.Parameters.AddWithValue("@url", string.IsNullOrEmpty(url) ? "http://example.com" : url); 
 
                         cmd.ExecuteNonQuery();
                         MessageBox.Show("Appointment added successfully.");

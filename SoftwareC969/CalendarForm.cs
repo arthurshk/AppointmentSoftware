@@ -33,16 +33,15 @@ namespace SoftwareC969
                     string query = @"SELECT c.customerName, a.type, a.start, a.end
                              FROM appointment a
                              JOIN customer c ON a.customerId = c.customerId
-                             WHERE a.customerId = @customerId 
-                             AND DATE(a.start) = @date";
+                             WHERE DATE(a.start) = @date";
 
                     MySqlCommand cmd = new MySqlCommand(query, connection);
-                    cmd.Parameters.AddWithValue("@customerId", customerId);
                     cmd.Parameters.AddWithValue("@date", date.Date);
 
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     DataTable table = new DataTable();
                     adapter.Fill(table);
+
                     if (table.Rows.Count == 0)
                     {
                         MessageBox.Show("No appointments found for this date.");
@@ -72,6 +71,7 @@ namespace SoftwareC969
                 }
             }
         }
+
 
         private void btnViewReports3_Click(object sender, EventArgs e)
         {
